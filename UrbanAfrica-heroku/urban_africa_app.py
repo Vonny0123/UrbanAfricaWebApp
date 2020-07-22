@@ -72,5 +72,5 @@ if data_file is not None:
     if isurban is not None:
       st.write('Processing complete.')
       data['is_urban'] = isurban
-      data.to_csv(data_dir_, index=False)
+      #data.to_csv(data_dir_, index=False)
       
