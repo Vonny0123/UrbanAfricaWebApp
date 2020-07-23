@@ -11,8 +11,7 @@ import pandas as pd
 import geopandas as gpd
 import numpy as np
 import time
-from Pillow imort Image
-#from PIL import Image
+from PIL import Image
 image = Image.open('AfricaPolis.jpg')
 
 st.image(image, caption='', use_column_width=True)
