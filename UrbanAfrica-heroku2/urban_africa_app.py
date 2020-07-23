@@ -49,11 +49,12 @@ def download_africapolis():
   polys = africapolis.geometry #This is a series of polygons
   containment_checker = polys.geometry.buffer(0).contains
   t3 = time.time()
-  return containment_checker
+  return containment_checker, t1, t2, t3
 
 
-containment_checker = download_africapolis()
-st.write([t2-t1, t3-t2])
+containment_checker, t1, t2, t3 = download_africapolis()
+if containment_checker is not None:
+  st.write([t2-t1, t3-t2])
 long_name = 'longitude'
 lat_name = 'latitude'
 isurban=None
