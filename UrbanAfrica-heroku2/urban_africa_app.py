@@ -28,17 +28,19 @@ def containment_tests(data, checker, long_name='longitude', lat_name='latitude')
     progress_bar = st.progress(0)
     status_text = st.empty()
     start = time.time()
+    iter_time = time.time()
     for pt in points.geometry:
       j = int(np.ceil(i*prog_scale))
       progress_bar.progress(j)
       r.append(containment_checker(pt))
-      if i % 10 == 1:
+      if i % 50 == 1:
         elapsed_num = time.time()-start
         elapsed_sec = time.gmtime(elapsed_num)
         elapsed = time.strftime("%M:%S", elapsed_sec)
-        it_per_s = round(i/elapsed_num,ndigits=3)
+        it_per_s = round(50/(time.time()-iter_time),ndigits=1)
         remaining_sec = time.gmtime((n_data - i)/it_per_s)
         remaining = time.strftime("%M:%S", remaining_sec)
+        iter_time = time.time()
       status_text.text(f'Progress: {i}/{n_data}, Time: {elapsed},\nit/s: {it_per_s}, Remaining: {remaining}')
       i+=1
     #r = points.geometry.progress_apply(containment_checker)
@@ -56,7 +58,7 @@ def download_africapolis():
 """
 # Urban Africa Labelling
 
-This web application will label entries in a dataset as urban or rural based on latitude and longitude using the Africapolis dataset. 
+This web application will label entries in a dataset as urban or rural based on latitude and longitude using the AfricaPolis dataset. 
 
 Once the AfricaPolis data has been loaded, you will be prompted to select your dataset (csv or xlsx) using the file explorer. Processing will then happen automatically. You will then be prompted to download the processed data, simply click the link to start the download. 
 """
