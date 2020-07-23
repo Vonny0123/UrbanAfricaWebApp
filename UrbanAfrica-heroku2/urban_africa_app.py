@@ -40,28 +40,18 @@ def containment_tests(data, checker, long_name='longitude', lat_name='latitude')
     return np.any(r, axis=1)
 
 
-#@st.cache
-#def download_africapolis():
-#  africapolis_url = 'http://www.africapolis.org/download/Africapolis_2015_shp.zip'
-#  africapolis = gpd.read_file(africapolis_url)
-#  polys = africapolis.geometry #This is a series of polygons
-#  containment_checker = polys.geometry.buffer(0).contains
-#  return containment_checker
-
-st.write(os.listdir())
-
-@st.chache
-def load_africapolis():
-  i = 0
-  for filename in os.listdir('africapolis'):
-    if i == 0:
-      africapolis = gpd.read_file(os.path.join('africapolis', filename))
-    else:
-      africapolis = africapolis.append(gpd.read_file(os.path.join('africapolis', filename)))
-    i+=1
+@st.cache
+def download_africapolis():
+  africapolis_url = 'http://www.africapolis.org/download/Africapolis_2015_shp.zip'
+  africapolis = gpd.read_file(africapolis_url)
+  if africapolis is not None:
+    st.write('loaded')
   polys = africapolis.geometry #This is a series of polygons
   containment_checker = polys.geometry.buffer(0).contains
+  if containment_checker is not None:
+    st.write('containment checker created')
   return containment_checker
+
 
 containment_checker = download_africapolis()
 long_name = 'longitude'
