@@ -13,6 +13,7 @@ import os
 import cloudpickle
 import time
 
+st.write(os.listdir())
 
 def containment_tests(data, checker, long_name='longitude', lat_name='latitude'):
   data = pd.DataFrame(data)
