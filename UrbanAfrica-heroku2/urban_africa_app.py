@@ -5,6 +5,7 @@ Created on Sat Jul 18 12:37:18 2020
 @author: ewand
 """
 
+import base64
 import streamlit as st
 import pandas as pd
 import geopandas as gpd
@@ -73,5 +74,9 @@ if data_file is not None:
     if isurban is not None:
       st.write('Processing complete.')
       data['is_urban'] = isurban
-      data.to_csv('Processed_dataset.csv')
+      csv = data.to_csv(index=False)
+      
+      b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
+      href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (right-click and save as &lt;data_with_isurban&gt;.csv)'
+      st.markdown(href, unsafe_allow_html=True)
       
