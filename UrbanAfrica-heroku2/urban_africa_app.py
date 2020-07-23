@@ -12,7 +12,6 @@ import geopandas as gpd
 import numpy as np
 import time
 from PIL import Image
-from io import BytesIO
 image = Image.open('AfricaPolis_cropped.jpg')
 
 st.image(image, caption='', use_column_width=True)
@@ -55,10 +54,11 @@ def download_africapolis():
   return containment_checker
 
 """
-# Urban Labeller
+# Urban Africa Labelling
 
 This web application will label entries in a dataset as urban or rural based on latitude and longitude using the Africapolis dataset. 
-Once the Africapolis data has been loaded, you will be prompted to select your dataset (csv or xlsx) using the file explorer. Processing will then happen automatically. You will then be prompted to download the processed data, right-click the link and select save-as to save the data in your desired location. 
+
+Once the AfricaPolis data has been loaded, you will be prompted to select your dataset (csv or xlsx) using the file explorer. Processing will then happen automatically. You will then be prompted to download the processed data, simply click the link to start the download. 
 """
 
 
@@ -72,6 +72,7 @@ data_file = st.file_uploader('Select your data file:', type=['csv', 'xlsx'])
 
 if data_file is not None:
   data = pd.read_csv(data_file)
+  st.write(data.head(5))
   if long_name not in data.columns or lat_name not in data.columns:
     long_name = st.selectbox('Please select the name of the Longitude column in your data', ['Please Select One']+list(data.columns))
     lat_name = st.selectbox('Please select the name of the Latitude column in your data', ['Please Select One']+list(data.columns))
