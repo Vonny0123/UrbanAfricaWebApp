@@ -12,6 +12,7 @@ import geopandas as gpd
 import numpy as np
 import time
 from PIL import Image
+from io import BytesIO
 image = Image.open('AfricaPolis_cropped.jpg')
 
 st.image(image, caption='', use_column_width=True)
@@ -33,10 +34,13 @@ def containment_tests(data, checker, long_name='longitude', lat_name='latitude')
       progress_bar.progress(j)
       r.append(containment_checker(pt))
       if i % 10 == 1:
-        elapsed = round(time.time()-start,ndigits=3)
-        it_per_s = round(i/elapsed,ndigits=3)
-        remaining = round((n_data - i)/it_per_s, ndigits=3)
-      status_text.text(f'Progress: {i}/{n_data}, Time: {elapsed}s,\nit/s: {it_per_s}, Remaining: {remaining}s')
+        elapsed_num = time.time()-start
+        elapsed_sec = time.gmtime(elapsed_num)
+        elapsed = time.strftime("%M:%S", elapsed_sec)
+        it_per_s = round(i/elapsed_num,ndigits=3)
+        remaining_sec = time.gmtime((n_data - i)/it_per_s)
+        remaining = time.strftime("%M:%S", remaining_sec)
+      status_text.text(f'Progress: {i}/{n_data}, Time: {elapsed},\nit/s: {it_per_s}, Remaining: {remaining}')
       i+=1
     #r = points.geometry.progress_apply(containment_checker)
     return np.any(r, axis=1)
@@ -81,9 +85,28 @@ if data_file is not None:
     if isurban is not None:
       st.write('Processing complete.')
       data['is_urban'] = isurban
-      csv = data.to_csv(index=False)
+      #csv = data.to_csv(index=False)
+            
+      def download_link(object_to_download, download_filename, download_link_text):
+        """
+        Generates a link to download the given object_to_download.
+    
+        object_to_download (str, pd.DataFrame):  The object to be downloaded.
+        download_filename (str): filename and extension of file. e.g. mydata.csv, some_txt_output.txt
+        download_link_text (str): Text to display for download link.
+    
+        Examples:
+        download_link(YOUR_DF, 'YOUR_DF.csv', 'Click here to download data!')
+        download_link(YOUR_STRING, 'YOUR_STRING.txt', 'Click here to download your text!')
+    
+        """
+        if isinstance(object_to_download,pd.DataFrame):
+            object_to_download = object_to_download.to_csv(index=False)
+    
+        # some strings <-> bytes conversions necessary here
+        b64 = base64.b64encode(object_to_download.encode()).decode()
+        return f'<a href="data:file/txt;base64,{b64}" download="{download_filename}">{download_link_text}</a>'
+        
+      data_download = download_link(data, 'processed_data.csv', 'Click to download data')
       
-      b64 = base64.b64encode(csv.encode()).decode()  # some strings <-> bytes conversions necessary here
-      href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (right-click and save as &lt;data_with_isurban&gt;.csv)'
-      st.markdown(href, unsafe_allow_html=True)
-      
+      st.markdown(data_download, unsafe_allow_html=True)
