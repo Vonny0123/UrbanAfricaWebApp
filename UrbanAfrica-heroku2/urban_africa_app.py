@@ -10,8 +10,12 @@ import streamlit as st
 import pandas as pd
 import geopandas as gpd
 import numpy as np
-import cloudpickle
 import time
+from Pillow imort Image
+#from PIL import Image
+image = Image.open('AfricaPolis.jpg')
+
+st.image(image, caption='', use_column_width=True)
 
 def containment_tests(data, checker, long_name='longitude', lat_name='latitude'):
   data = pd.DataFrame(data)
@@ -46,6 +50,13 @@ def download_africapolis():
   polys = africapolis.geometry #This is a series of polygons
   containment_checker = polys.geometry.buffer(0).contains
   return containment_checker
+
+"""
+# Urban Labeller
+
+This web application will label entries in a dataset as urban or rural based on latitude and longitude using the Africapolis dataset. 
+Once the Africapolis data has been loaded, you will be prompted to select your dataset (csv or xlsx) using the file explorer. Processing will then happen automatically. You will then be prompted to download the processed data, right-click the link and select save-as to save the data in your desired location. 
+"""
 
 
 containment_checker = download_africapolis()
