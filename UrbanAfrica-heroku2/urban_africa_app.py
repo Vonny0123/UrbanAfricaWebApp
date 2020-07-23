@@ -12,7 +12,7 @@ import geopandas as gpd
 import numpy as np
 import time
 from PIL import Image
-image = Image.open('AfricaPolis.jpg')
+image = Image.open('AfricaPolis_cropped.jpg')
 
 st.image(image, caption='', use_column_width=True)
 
@@ -67,7 +67,7 @@ data_file = st.file_uploader('Select your data file:', type=['csv', 'xlsx'])
 #africapolis_file = st.file_uploader('Select your Africapolis file:', type=['shp'])
 
 if data_file is not None:
-  data = pd.read_csv(data_file).iloc[:100,:]
+  data = pd.read_csv(data_file)
   if long_name not in data.columns or lat_name not in data.columns:
     long_name = st.selectbox('Please select the name of the Longitude column in your data', ['Please Select One']+list(data.columns))
     lat_name = st.selectbox('Please select the name of the Latitude column in your data', ['Please Select One']+list(data.columns))
