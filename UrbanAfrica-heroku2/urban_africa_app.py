@@ -42,19 +42,14 @@ def containment_tests(data, checker, long_name='longitude', lat_name='latitude')
 
 @st.cache
 def download_africapolis():
-  t1 = time.time()
   africapolis_url = 'http://www.africapolis.org/download/Africapolis_2015_shp.zip'
   africapolis = gpd.read_file(africapolis_url)
-  t2 = time.time()
   polys = africapolis.geometry #This is a series of polygons
   containment_checker = polys.geometry.buffer(0).contains
-  t3 = time.time()
-  return containment_checker, t1, t2, t3
+  return containment_checker
 
 
-containment_checker, t1, t2, t3 = download_africapolis()
-if containment_checker is not None:
-  st.write([t2-t1, t3-t2])
+containment_checker = download_africapolis()
 long_name = 'longitude'
 lat_name = 'latitude'
 isurban=None
@@ -77,5 +72,5 @@ if data_file is not None:
     if isurban is not None:
       st.write('Processing complete.')
       data['is_urban'] = isurban
-      #data.to_csv(data_dir_, index=False)
+      data.to_csv('Processed_dataset.csv')
       
