@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run urban_africa_app.py
+web: streamlit run --server.enableCORS false --server.port $PORT urban_africa_app.py
