@@ -68,7 +68,7 @@ def check_valid_country(string, valid_list):
   sim_metrics = [jellyfish.levenshtein_distance(string, valid_country) for valid_country in valid_list]
   valid_list_sorted = [x for _, x in sorted(zip(sim_metrics,valid_list), key=lambda pair: pair[0])]
   if string not in [_ for _ in valid_list]:
-    valid_string = st.sidebar.selectbox(f'*{string.upper()}* does not appear in the AfricaPolis dataset. Please select the corresponding country name.', ['Please Select One', 'My country is missing!']+list(valid_list_sorted))
+    valid_string = st.sidebar.selectbox(f'*{string.upper()}* does not appear in the Africapolis dataset. Please select the corresponding country name.', ['Please Select One', 'My country is missing!']+list(valid_list_sorted))
   else:
     valid_string = string
   return valid_string
@@ -85,11 +85,11 @@ def download_link(object_to_download, download_filename, download_link_text):
 """
 # Urban Africa Labelling
 
-This web application will label entries in a dataset as urban or rural based on latitude and longitude using the AfricaPolis dataset. 
+This web application will label entries in a dataset as urban or rural based on latitude and longitude using the Africapolis dataset. 
 
-Once the AfricaPolis data has been loaded, you will be prompted to select your dataset (csv or xlsx) using the file explorer. Processing will then happen automatically. You will then be prompted to download the processed data, simply click the link to start the download.
+Once the Africapolis data has been loaded, you will be prompted to select your dataset (csv or xlsx) using the file explorer. Processing will then happen automatically. You will then be prompted to download the processed data, simply click the link to start the download.
 
-Please note that there are some gaps in the AfricaPolis database, for example Madagascar not being covered. If this is a concern, check which countries are covered in the Country Data link at https://www.africapolis.org/data 
+Please note that there are some gaps in the Africapolis database, for example Madagascar not being covered. If this is a concern, check which countries are covered in the Country Data link at https://www.africapolis.org/data 
 """
 
 
