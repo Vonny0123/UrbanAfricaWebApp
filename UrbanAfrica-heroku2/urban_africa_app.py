@@ -17,8 +17,8 @@ import datetime
 
 image = Image.open('AfricaPolis_cropped.jpg')
 
-st.image(image, caption='', use_column_width=True)
-st.sidebar.image(image, caption='', use_column_width=True)
+#st.image(image, caption='', use_column_width=True)
+#st.sidebar.image(image, caption='', use_column_width=True)
 
 
 def containment_tests(data, checker, long_name='longitude', lat_name='latitude'):
