@@ -18,6 +18,8 @@ import datetime
 image = Image.open('AfricaPolis_cropped.jpg')
 
 st.image(image, caption='', use_column_width=True)
+st.sidebar.image(image, caption='', use_column_width=True)
+
 
 def containment_tests(data, checker, long_name='longitude', lat_name='latitude'):
   data = pd.DataFrame(data)
@@ -66,7 +68,7 @@ def check_valid_country(string, valid_list):
   sim_metrics = [jellyfish.levenshtein_distance(string, valid_country) for valid_country in valid_list]
   valid_list_sorted = [x for _, x in sorted(zip(sim_metrics,valid_list), key=lambda pair: pair[0])]
   if string not in [_ for _ in valid_list]:
-    valid_string = st.selectbox(f'*{string.upper()}* does not appear in the AfricaPolis dataset. Please select the corresponding country name.', ['Please Select One', 'My country is missing!']+list(valid_list_sorted))
+    valid_string = st.sidebar.selectbox(f'*{string.upper()}* does not appear in the AfricaPolis dataset. Please select the corresponding country name.', ['Please Select One', 'My country is missing!']+list(valid_list_sorted))
   else:
     valid_string = string
   return valid_string
@@ -96,20 +98,22 @@ long_name = 'longitude'
 lat_name = 'latitude'
 isurban=None
 
-data_file = st.file_uploader('Select your data file:', type=['csv', 'xlsx'])
+st.sidebar.markdown('### Provide input when prompted:')
+
+data_file = st.sidebar.file_uploader('Select your data file:', type=['csv', 'xlsx'])
 
 
 if data_file is not None:
   data = pd.read_csv(data_file)
   st.write(data.head(5))
-  filter_countries = st.selectbox('If your dataframe contains a country attribute we can use this to check only the relevant AfricaPolis data. This may greatly improve performance. Should this be done? Recommended for large datasets or when events occur in a small number of countries.', ['Please Select One', 'Yes', 'No'])
+  filter_countries = st.sidebar.selectbox("Does your dataset have a 'Country' attribute?", ['Please Select One', 'Yes', 'No'])
   if filter_countries != 'Please Select One':
     filter_countries = (filter_countries == 'Yes')
     
     filtering_done = False
     if filter_countries:
       if 'country' not in data.columns:
-        country_col = st.selectbox('Please enter the name of the Country column.', ['Please Select One']+list(data.columns))
+        country_col = st.sidebar.selectbox('Please enter the name of the Country column.', ['Please Select One']+list(data.columns))
       else:
         country_col = 'country'
       
@@ -140,8 +144,8 @@ if data_file is not None:
       containment_checker = process_africapolis(africapolis)
       
       if long_name not in data.columns or lat_name not in data.columns:
-        long_name = st.selectbox('Please select the name of the Longitude column in your data', ['Please Select One']+list(data.columns))
-        lat_name = st.selectbox('Please select the name of the Latitude column in your data', ['Please Select One']+list(data.columns))
+        long_name = st.sidebar.selectbox('Please select the name of the Longitude column in your data', ['Please Select One']+list(data.columns))
+        lat_name = st.sidebar.selectbox('Please select the name of the Latitude column in your data', ['Please Select One']+list(data.columns))
       if long_name != 'Please Select One' and lat_name != 'Please Select One':
         st.write('Processing data now, this may take some time...')
         isurban = containment_tests(data=data, 
