@@ -14,8 +14,6 @@ import time
 from PIL import Image
 import jellyfish
 import datetime
-import multiprocessing
-st.write(multiprocessing.cpu_count())
 image = Image.open('AfricaPolis_cropped.jpg')
 
 #st.image(image, caption='', use_column_width=True)
@@ -51,8 +49,7 @@ def containment_tests(data, checker, long_name='longitude', lat_name='latitude')
       i+=1
     #r = points.geometry.progress_apply(containment_checker)
     return np.any(r, axis=1)
-
-
+  
 @st.cache
 def download_africapolis():
   africapolis_url = 'http://www.africapolis.org/download/Africapolis_2015_shp.zip'
