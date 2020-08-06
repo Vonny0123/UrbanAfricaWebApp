@@ -14,9 +14,6 @@ import time
 from PIL import Image
 import jellyfish
 import datetime
-import dask.dataframe as dd
-from dask.callbacks import Callback
-
 
 image = Image.open('AfricaPolis_cropped.jpg')
 
@@ -54,25 +51,6 @@ def containment_tests(data, checker, long_name='longitude', lat_name='latitude')
     #r = points.geometry.progress_apply(containment_checker)
     return np.any(r, axis=1)
   
-
-  
-def multi_process_containment_tests(data, checker, long_name='longitude', lat_name='latitude', cores=1000):
-  data = pd.DataFrame(data)
-  points = gpd.GeoDataFrame(data.loc[:,[long_name,lat_name]], geometry=gpd.points_from_xy(data.loc[:,long_name], data.loc[:,lat_name])) #create a series of point objects representing location of events
-  global prog, progress_bar
-  prog = 0
-  progress_bar = st.progress(0)
-  
-  def UpdateProgress(key, result, dsk, state, id):
-    global prog, progress_bar
-    prog += 1
-    st.write(prog)
-    progress_bar.progress(prog)
-  
-  with Callback(posttask=UpdateProgress): 
-    r = dd.from_pandas(points.geometry, npartitions=cores).map_partitions(lambda dframe: pd.Series(np.any(dframe.apply(checker), axis=1)), meta=pd.Series(dtype=bool)).compute(scheduler='processes')  
-  return r
-
 @st.cache
 def download_africapolis():
   africapolis_url = 'http://www.africapolis.org/download/Africapolis_2015_shp.zip'
