@@ -15,7 +15,7 @@ from PIL import Image
 import jellyfish
 import datetime
 import multiprocessing
-st.write(multiprocessing.())
+st.write(multiprocessing.cpu_count())
 image = Image.open('AfricaPolis_cropped.jpg')
 
 #st.image(image, caption='', use_column_width=True)
