@@ -14,6 +14,10 @@ import time
 from PIL import Image
 import jellyfish
 import datetime
+import dask.dataframe as dd
+from dask.callbacks import Callback
+
+
 image = Image.open('AfricaPolis_cropped.jpg')
 
 #st.image(image, caption='', use_column_width=True)
@@ -50,13 +54,31 @@ def containment_tests(data, checker, long_name='longitude', lat_name='latitude')
     #r = points.geometry.progress_apply(containment_checker)
     return np.any(r, axis=1)
   
+
+  
+def multi_process_containment_tests(data, checker, long_name='longitude', lat_name='latitude', cores=1000):
+  data = pd.DataFrame(data)
+  points = gpd.GeoDataFrame(data.loc[:,[long_name,lat_name]], geometry=gpd.points_from_xy(data.loc[:,long_name], data.loc[:,lat_name])) #create a series of point objects representing location of events
+  global prog, progress_bar
+  prog = 0
+  progress_bar = st.progress(0)
+  
+  def UpdateProgress(key, result, dsk, state, id):
+    global prog, progress_bar
+    prog += 1
+    st.write(prog)
+    progress_bar.progress(prog)
+  
+  with Callback(posttask=UpdateProgress): 
+    r = dd.from_pandas(points.geometry, npartitions=cores).map_partitions(lambda dframe: pd.Series(np.any(dframe.apply(checker), axis=1)), meta=pd.Series(dtype=bool)).compute(scheduler='processes')  
+  return r
+
 @st.cache
 def download_africapolis():
   africapolis_url = 'http://www.africapolis.org/download/Africapolis_2015_shp.zip'
   africapolis = gpd.read_file(africapolis_url)
   return africapolis
 
-@st.cache
 def process_africapolis(africapolis):
   polys = africapolis.geometry #This is a series of polygons
   containment_checker = polys.geometry.buffer(0).contains
@@ -139,22 +161,23 @@ if data_file is not None:
       filtering_done = True
         
     if filtering_done:
-      containment_checker = process_africapolis(africapolis)
+      with st.spinner('Processing Data...'):
+        containment_checker = process_africapolis(africapolis)
       
-      if long_name not in data.columns or lat_name not in data.columns:
-        long_name = st.sidebar.selectbox('Please select the name of the Longitude column in your data', ['Please Select One']+list(data.columns))
-        lat_name = st.sidebar.selectbox('Please select the name of the Latitude column in your data', ['Please Select One']+list(data.columns))
-      if long_name != 'Please Select One' and lat_name != 'Please Select One':
-        st.write('Processing data now, this may take some time...')
-        isurban = containment_tests(data=data, 
-                                    checker = containment_checker,
-                                    long_name=long_name,
-                                    lat_name=lat_name)
-        
-        if isurban is not None:
-          #st.balloons()
-          st.success('Processing complete.')
-          data['is_urban'] = isurban                
+      
+        if long_name not in data.columns or lat_name not in data.columns:
+          long_name = st.sidebar.selectbox('Please select the name of the Longitude column in your data', ['Please Select One']+list(data.columns))
+          lat_name = st.sidebar.selectbox('Please select the name of the Latitude column in your data', ['Please Select One']+list(data.columns))
+        if long_name != 'Please Select One' and lat_name != 'Please Select One':
+          isurban = containment_tests(data=data, 
+                                      checker = containment_checker,
+                                      long_name=long_name,
+                                      lat_name=lat_name)
+          
+          if isurban is not None:
+            #st.balloons()
+            st.success('Processing complete.')
+            data['is_urban'] = isurban                
           
           data_download = download_link(data, f'urban-africa-downloads-{str(datetime.datetime.now())}.csv', 'Click to Download Data')
           
