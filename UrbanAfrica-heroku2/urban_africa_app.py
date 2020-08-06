@@ -14,7 +14,8 @@ import time
 from PIL import Image
 import jellyfish
 import datetime
-
+import multiprocessing
+st.write(multiprocessing.())
 image = Image.open('AfricaPolis_cropped.jpg')
 
 #st.image(image, caption='', use_column_width=True)
