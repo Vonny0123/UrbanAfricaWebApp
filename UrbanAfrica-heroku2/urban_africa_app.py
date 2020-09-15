@@ -87,7 +87,9 @@ This web application will label entries in a dataset as urban or rural based on 
 
 Once the Africapolis data has been loaded, you will be prompted to select your dataset (csv or xlsx) using the file explorer. Processing will then happen automatically. You will then be prompted to download the processed data, simply click the link to start the download.
 
-Please note that there are some gaps in the Africapolis database, for example Madagascar not being covered. If this is a concern, check which countries are covered in the Country Data link at https://www.africapolis.org/data 
+Please note that there are some gaps in the Africapolis database, for example Madagascar not being covered. If this is a concern, check which countries are covered in the Country Data link at https://www.africapolis.org/data.
+
+It is important to note that this online application is only recommended for relatively small datasets. If you have a larger dataset to process, there is an implementation of the labelling tool for your local machine (only for Windows currently), which will be significantly faster. It can be found in this Google Drive folder: https://drive.google.com/drive/folders/1IZUmXa5qvQv8VIMBK-ckYuakvjbDsmHS?usp=sharing. Simply download and unzip the zip file, then find the file named 'Urban Africa Labelling.exe', run it and follow the instructions in the application.
 """
 
 
